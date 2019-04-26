@@ -8,12 +8,12 @@ public class UebergangsFunktion {
 
 	private Zustand zustandA;
 	private Zustand zustandB;
-	private Set<Band> bänder;
+	private Set<Band> baender;
 
 	public UebergangsFunktion(Zustand zustandA, Zustand zustandB) {
 		setZustandA(zustandA);
 		setZustandB(zustandB);
-		this.bänder = new HashSet<>();
+		this.baender = new HashSet<>();
 	}
 
 	public Zustand getZustandA() {
@@ -39,19 +39,19 @@ public class UebergangsFunktion {
 
 	}
 
-	public Set<Band> getBänder() {
-		return Collections.unmodifiableSet(bänder);
+	public Set<Band> getBaender() {
+		return Collections.unmodifiableSet(baender);
 	}
 
 	public void addBand(Band band) {
 		if (band == null) {
 			throw new NullPointerException("band is not specified");
 		}
-		bänder.add(band);
+		baender.add(band);
 	}
 
 	public void removeBand(Band band) {
-		bänder.remove(band);
+		baender.remove(band);
 	}
 
 }

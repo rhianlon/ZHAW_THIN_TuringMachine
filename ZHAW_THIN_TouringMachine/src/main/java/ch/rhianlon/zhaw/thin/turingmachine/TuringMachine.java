@@ -5,18 +5,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TuringMachine {
-	
-	private Set<Zustand> zustände;
+	private Set<Zustand> zustaende;
 	private Zustand startZustand;
 	private Set<Character> eingabeAlphabet;
 	private Set<Character> bandAlphabet;
 	private char leeresFeld;
 	private Set<UebergangsFunktion> uebergangsFunktionen;
-	
+
 	public TuringMachine(Zustand startZustand, char leeresFeld) {
 		setStartZustand(startZustand);
 		setLeeresFeld(leeresFeld);
-		this.zustände = new HashSet<>();
+		this.zustaende = new HashSet<>();
 		this.eingabeAlphabet = new HashSet<>();
 		this.bandAlphabet = new HashSet<>();
 		this.uebergangsFunktionen = new HashSet<>();
@@ -41,25 +40,25 @@ public class TuringMachine {
 		this.leeresFeld = leeresFeld;
 	}
 
-	public Set<Zustand> getZustände() {
-		return Collections.unmodifiableSet(zustände);
+	public Set<Zustand> getZustaende() {
+		return Collections.unmodifiableSet(zustaende);
 	}
-	
+
 	public void addZustand(Zustand zustand) {
 		if (zustand == null) {
 			throw new NullPointerException("Zustand is not specified");
 		}
-		zustände.add(zustand);
+		zustaende.add(zustand);
 	}
 
 	public void removeZustand(Zustand zustand) {
-		zustände.remove(zustand);
+		zustaende.remove(zustand);
 	}
 
 	public Set<Character> getEingabeAlphabet() {
 		return Collections.unmodifiableSet(eingabeAlphabet);
 	}
-	
+
 	public void addEingabeAlphabet(Character c) {
 		if (c == null) {
 			throw new NullPointerException("Eingabealphabet is not specified");
@@ -74,7 +73,7 @@ public class TuringMachine {
 	public Set<Character> getBandAlphabet() {
 		return Collections.unmodifiableSet(bandAlphabet);
 	}
-	
+
 	public void addBandAlphabet(Character c) {
 		if (c == null) {
 			throw new NullPointerException("Bandalphabet is not specified");
@@ -89,7 +88,7 @@ public class TuringMachine {
 	public Set<UebergangsFunktion> getUebergangsFunktionen() {
 		return Collections.unmodifiableSet(uebergangsFunktionen);
 	}
-	
+
 	public void addUebergangsFunktion(UebergangsFunktion uebergangsFunktion) {
 		if (uebergangsFunktion == null) {
 			throw new NullPointerException("Uebrgangsfunktion is not specified");
@@ -100,11 +99,4 @@ public class TuringMachine {
 	public void removeUebergangsFunktion(UebergangsFunktion uebergangsFunktion) {
 		uebergangsFunktionen.remove(uebergangsFunktion);
 	}
-	
-	
-	
-	
-	
-	
-
 }

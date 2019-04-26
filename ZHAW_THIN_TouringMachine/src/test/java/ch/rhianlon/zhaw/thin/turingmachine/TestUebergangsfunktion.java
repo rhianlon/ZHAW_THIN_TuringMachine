@@ -34,14 +34,14 @@ class TestUebergangsfunktion {
 
 		Band band1 = new Band(2,'T','F',Richtung.LINKS);
 		uebergangsFunktion1.addBand(band1);
-		Assertions.assertEquals(true,uebergangsFunktion1.getBänder().contains(band1),"Bänder fllllasch");
+		Assertions.assertEquals(true,uebergangsFunktion1.getBaender().contains(band1),"Baender fllllasch");
 		
 		uebergangsFunktion1.removeBand(band1);
-		Assertions.assertEquals(false,uebergangsFunktion1.getBänder().contains(band1),"Bänder fllllasch");
+		Assertions.assertEquals(false,uebergangsFunktion1.getBaender().contains(band1),"Baenderï¿½nder fllllasch");
 		
 		Band band2 = new Band(4,'Q','L',Richtung.RECHTS);
 		Assertions.assertThrows(UnsupportedOperationException.class, () -> {
-			uebergangsFunktion1.getBänder().add(band2);
+			uebergangsFunktion1.getBaender().add(band2);
 		});
 		
 	}
