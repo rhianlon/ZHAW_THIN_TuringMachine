@@ -1,4 +1,4 @@
-package ch.rhianlon.zhaw.thin.touringmachine;
+package ch.rhianlon.zhaw.thin.turingmachine;
 
 public class Main {
 
