@@ -54,4 +54,8 @@ public class UebergangsFunktion {
 		baender.remove(band);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s -> %s", getZustandA().toString(), getZustandB().toString());
+	}
 }
