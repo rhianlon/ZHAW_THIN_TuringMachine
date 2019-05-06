@@ -119,7 +119,7 @@ public class Interpreter {
 			print();
 			takeABreak();
 		}
-		
+
 		System.out.println();
 		System.out.println();
 		printLine();
@@ -139,6 +139,16 @@ public class Interpreter {
 			}
 			System.out.println();
 		}
+		int letzterBandIndex = baender -1;
+		Map<Integer,Character> letztesBand =getBand(letzterBandIndex);
+		int count = 0;
+		for(char c: letztesBand.values()) {
+			if( c == '0') {
+				count ++;
+			}
+		}
+		System.out.println("\nResultat: " + count);
+		
 	}
 	
 	private int validateBaender() {
