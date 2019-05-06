@@ -10,12 +10,17 @@ import java.util.Map;
 import java.util.Set;
 
 public class Interpreter {
+	private static final int OFFSET = 30;
+	private static final int OFFSET_LEFT = OFFSET;
+	private static final int OFFSET_RIGHT = OFFSET;
 
 	private final InterpreterModus modus;
 	private final TuringMachine turingMachine;
+	
 	private boolean started;
 	private Zustand currentZustand;
-	private int zustandCounter;
+	private int uebergangsCounter;
+	private int baender;
 
 	private Map<Integer, Map<Integer, Character>> bandBeiBandIndex;
 	private Map<Integer, Integer> positionBeiBandIndex;
@@ -41,30 +46,26 @@ public class Interpreter {
 		if (started) {
 			throw new IllegalStateException("Maschine darf nicht 2x gestartet werden");
 		}
+		
+		for (int i = 0; i < eingabe.length(); i++) {
+			char zeichen = eingabe.charAt(i);
+			if (!turingMachine.getEingabeAlphabet().contains(zeichen)) {
+				throw new IllegalArgumentException(String.format("zeichen %s ist nicht im Eingabealphabet definitiert", String.valueOf(zeichen)));
+			}
+		}
 
 		started = true;
-		zustandCounter = 0;
+		uebergangsCounter = 0;
+		baender = 0;
 
 		bandBeiBandIndex = new HashMap<>();
 		positionBeiBandIndex = new HashMap<>();
 		
-		// Anzahl Bänder validieren
-		int baender = 0;
-		for (UebergangsFunktion uebergangsFunktion : turingMachine.getUebergangsFunktionen()) {
-			int actualBaender = uebergangsFunktion.getBaender().size();
-			if (baender == 0) {
-				baender = actualBaender;
-			} else if (actualBaender != baender) {
-				throw new IllegalArgumentException(String.format(
-					"Maschine muss pro Funktion genau %d Bänder haben, es wurden jedoch %d gefunden", baender, actualBaender));
-			}
-		}
+		// Anzahl Bï¿½nder validieren
+		baender = validateBaender();
 		
-		// 30 Zeichen pro Band vorschreiben (-15 -> 15)
-		for (int i = -15; i <= 15; i++) {
-			for (int j = 0; j < baender; j ++) {
-				getZeichen(j, i, true);
-			}
+		for (int i = 0; i < baender; i++) {
+			getZeichen(i);
 		}
 		
 		// Eingabe auf das erste Band schreiben
@@ -74,8 +75,10 @@ public class Interpreter {
 			shiftPosition(0, Richtung.RECHTS);
 		}
 		
-		// Leseschreibkopf zurück an die Startposition setzten
+		// Leseschreibkopf zurï¿½ck an die Startposition setzten
 		positionBeiBandIndex.put(0, 0);
+		
+		
 
 		currentZustand = turingMachine.getStartZustand();
 		
@@ -111,14 +114,48 @@ public class Interpreter {
 				}
 			}
 			
-			zustandCounter ++;
+			uebergangsCounter ++;
 			
 			print();
 			takeABreak();
 		}
 		
+		System.out.println();
+		System.out.println();
+		printLine();
+		printLine();
+		printLine();
+		System.out.println("== TuringMachine beendet");
+		System.out.println();
+		
+		System.out.println("Anzahl Zustandswechsel: " + uebergangsCounter);
+		System.out.println("End-Zustand: " + currentZustand.getName());
+		System.out.println();
+		
+		for (int i = 0; i < baender; i++) {
+			System.out.print(i + ": ");
+			for (int j = getMin(); j <= getMax(); j++) {
+				System.out.print(getZeichen(i, j, false));
+			}
+			System.out.println();
+		}
 	}
-
+	
+	private int validateBaender() {
+		int baender = 0;
+		for (UebergangsFunktion uebergangsFunktion : turingMachine.getUebergangsFunktionen()) {
+			int actualBaender = uebergangsFunktion.getBaender().size();
+			if (baender == 0) {
+				baender = actualBaender;
+			} else if (actualBaender != baender) {
+				throw new IllegalArgumentException(String.format(
+					"Maschine muss pro Funktion genau %d Baender haben, es wurden jedoch %d gefunden", baender, actualBaender));
+			}
+		}
+		
+		return baender;
+	}
+	
 	private Map<Integer, Character> getBand(int bandIndex) {
 		if (bandBeiBandIndex.containsKey(bandIndex)) {
 			return bandBeiBandIndex.get(bandIndex);
@@ -175,7 +212,6 @@ public class Interpreter {
 	}
 
 	private void shiftPosition(int bandIndex, Richtung richtung) {
-		Map<Integer, Character> band = getBand(bandIndex);
 		int position = getPosition(bandIndex);
 
 		switch (richtung) {
@@ -189,9 +225,7 @@ public class Interpreter {
 			break;
 		case NICHTSUNTERNEHMEN:
 			break;
-
 		}
-
 	}
 
 	private Set<UebergangsFunktion> gimmeThemUebergangsFunktionen(Zustand zustand) {
@@ -236,24 +270,23 @@ public class Interpreter {
 		List<Integer> sortKeys = new ArrayList<>(bandBeiBandIndex.keySet());
 		sortKeys.sort(Comparator.naturalOrder());
 		
-		int min = getMin();
-		int max = getMax();
+		printLine();
 		
-		System.out.println();
-		System.out.println(String.format("==================== Zustandswechsel NR: %d", zustandCounter));
-		System.out.println(String.format("==================== Aktueller Zustand: %s", currentZustand.getName()));
+		System.out.println(String.format("== Zustandswechsel NR: %d", uebergangsCounter));
+		System.out.println(String.format("== Aktueller Zustand: %s", currentZustand.getName()));
+		
+		for (int i = 0; i < OFFSET_LEFT; i++) {
+			System.out.print(" ");
+		}
+		System.out.println(".");
+		
 		for (int bandIndex : sortKeys) {
-			
-			for (int i=min; i < getPosition(bandIndex); i++) {
-				System.out.print(" ");
-			}
-			System.out.print(".\n");
-			
-			for (int i=min; i < max; i++) {
+			int pos = getPosition(bandIndex);
+			for (int i = pos - OFFSET_LEFT; i <= pos + OFFSET_RIGHT; i++) {
 				System.out.print(getZeichen(bandIndex, i, false));
 			}
 			System.out.print("\n");
-		} 
+		}
 	}
 	
 	private int getMin() {
@@ -270,7 +303,7 @@ public class Interpreter {
 			}
 		}
 		
-		return result - 15;
+		return result - OFFSET_LEFT;
 	}
 	
 	private int getMax() {
@@ -287,11 +320,20 @@ public class Interpreter {
 			}
 		}
 		
-		return result + 15;
+		return result + OFFSET_RIGHT;
+	}
+	
+	private void printLine() {
+		for (int i = 0; i < OFFSET_LEFT + OFFSET_RIGHT + 1; i++) {
+			System.out.print("=");
+		}
+		System.out.println();
 	}
 	
 	private void takeABreak() throws IOException {
 		if (modus == InterpreterModus.STEPMODUS) {
+			System.out.println();
+			System.out.println("== Press enter to continue");
 			System.in.read();
 		}
 	}
